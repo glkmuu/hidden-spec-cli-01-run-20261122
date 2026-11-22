@@ -448,7 +448,7 @@ function parseV4a(lines: string[], strict: boolean): Edit[] {
     let j = bodyStart;
     while (j < end && kindOf(lines[j]!) === null) j += 1;
     const body = lines.slice(bodyStart, j);
-    while (body.length > 0 && body[body.length - 1] === '') body.pop();
+    while (body.length > 0 && blank(body[body.length - 1]!)) body.pop();
     if (kind === 'add') {
       const fileLines: string[] = [];
       for (let k = 0; k < body.length; k += 1) {
@@ -774,8 +774,7 @@ function run(args: string[]): { code: number; out: string[] } {
     const now = tree.now.get(p)!;
     if (was === now) continue;
     const tag = was === null ? 'A' : now === null ? 'D' : 'M';
-    if (used.has(`${tag}:${p}`)) continue;
-    rows.push({ key: p, line: `${tag} ${p}` });
+    if (!used.has(`${tag}:${p}`)) rows.push({ key: p, line: `${tag} ${p}` });
     if (check) continue;
     if (now === null) rmSync(p, { force: true });
     else {
